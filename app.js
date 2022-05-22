@@ -10,7 +10,7 @@ function createGrid(size){
         box.classList.add('box');
         container.appendChild(box);
         box.style.backgroundColor = `rgba(0,0,0,0)`;
-        box.addEventListener('mouseover',colorSquare); //add event listener to each box
+        box.addEventListener('click',colorSquare); //add event listener to each box
     }
 }
 function colorSquare(e){
@@ -60,7 +60,7 @@ const container = document.querySelector('#grid'); //Select the grid area
 const val = document.querySelector('#value'); //Select the element to show the size
 let currentSize = 16;
 createGrid(currentSize);
-val.textContent = `${(currentSize)}`;
+val.textContent = `${(currentSize)} x ${(currentSize)}`;
 let currentMode = '';
 
 const boxes = document.querySelectorAll('.box'); //Select the grid elements
@@ -79,6 +79,6 @@ buttons.forEach(btn => {
 const boardSize = document.querySelector('input[type=range]');
 boardSize.addEventListener('change', (e) =>{
     updateSize(parseInt(e.target.value))
-    val.textContent = e.target.value;
+    val.textContent = `${e.target.value} x ${e.target.value}`;
     
 });
