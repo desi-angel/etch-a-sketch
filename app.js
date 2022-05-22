@@ -6,32 +6,32 @@ function createGrid(size){
     container.style.gridTemplateRows = `repeat(${size}, 1fr)`;
     const loopVar = size * size;
     for (let i =0; i<loopVar; i++){
-        const box = document.createElement('div');
+        const box = document.createElement('div'); //create grid elements
         box.classList.add('box');
         container.appendChild(box);
+        box.style.backgroundColor = `rgba(0,0,0,0)`;
+        box.addEventListener('mouseover',colorSquare); //add event listener to each box
     }
 }
-function draw(e){
-    const boxes = document.querySelectorAll('.box');
-    if(e.currentTarget.id === 'clear'){
-        boxes.forEach(box => {
-            box.style.backgroundColor = 'white';
-        });
+function colorSquare(e){
+    if (currentMode === 'rainbow'){
+        this.style.backgroundColor = randomColor();
     }
-    else if(e.currentTarget.id === 'black'){
-        boxes.forEach(box => {
-            box.addEventListener('mouseenter', () =>{
-                box.style.backgroundColor = 'black'
-            });
-        });
+
+    else if(currentMode === 'shade'){
+        const currentColor = this.style.backgroundColor;
+        let match = /[^,]+(?=\))/.exec(currentColor);
+        let newOpacity = +(match[0]);
+        if(newOpacity < 0.9){
+            newOpacity = newOpacity+0.1;
+            this.style.backgroundColor = `rgba(0,0,0,${newOpacity})`;
+        }  
     }
+
     else{
-       boxes.forEach(box => {
-           box.addEventListener('mouseenter', () => {
-            box.style.backgroundColor = randomColor();
-           });
-       }); 
+        this.style.backgroundColor = currentMode;
     }
+    
 }
 function updateSize(newSize){
     currentSize = newSize;
@@ -49,17 +49,36 @@ function randomColor(){
     }
     return colors;
 }
-const container = document.querySelector('#grid'); //Select the grid 
+function resetGrid(){
+    boxes.forEach(box => {
+        box.style.backgroundColor = 'rgba(0,0,0,0)';
+        
+    });
+}
+let shadeNum = 0;
+const container = document.querySelector('#grid'); //Select the grid area
+const val = document.querySelector('#value'); //Select the element to show the size
 let currentSize = 16;
 createGrid(currentSize);
+val.textContent = `${(currentSize)}`;
+let currentMode = '';
 
+const boxes = document.querySelectorAll('.box'); //Select the grid elements
 const buttons = document.querySelectorAll('button'); //Select the buttons and add event listener
 buttons.forEach(btn => {
-    btn.addEventListener('click',draw);
-});
+    btn.addEventListener('click', (e) => {
+        //console.log(e.currentTarget.id);
+        if(e.currentTarget.id === 'clear') {
+            resetGrid();} //clear the drawing board
+        else {
+            currentMode = e.currentTarget.id; //sets the selected mode
+        }
 
+    });
+});
 const boardSize = document.querySelector('input[type=range]');
 boardSize.addEventListener('change', (e) =>{
     updateSize(parseInt(e.target.value))
+    val.textContent = e.target.value;
+    
 });
-
